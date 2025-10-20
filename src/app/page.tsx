@@ -1,4 +1,3 @@
-import Image from "next/image";
 import BaZi from "./component/BaZi";
 
 export default function Home() {

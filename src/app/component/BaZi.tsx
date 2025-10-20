@@ -3,6 +3,8 @@ import axios from "axios";
 import React, { ReactHTMLElement, useState } from "react";
 import { ButtonList, userInfo } from "./config";
 import Answer from "./Answer";
+import { RotateCcw } from "lucide-react";
+import Pending from "../UI/Pending";
 
 const genderMap: Record<string, string> = {
   gender_femail: "여성",
@@ -16,12 +18,6 @@ const birthMoonMap: Record<string, string> = {
 };
 
 const BaZi = () => {
-  const [userName, setUserName] = useState("");
-  const [userGender, setUserGender] = useState("");
-  const [userBirth, setUserBirth] = useState("");
-  const [optionBirth, setOptionBirth] = useState("양력");
-  const [userBirthTime, setUserBirthTime] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [answerData, setAnswerData] = useState();
 
@@ -73,7 +69,13 @@ const BaZi = () => {
     }
   };
 
+  /** post : gpt api */
   const handleClickEvent = async () => {
+    if (!userData.userName || !userData.gender || !userData.birthDate || !userData.birthMoon) {
+      alert("빠진정보가 없는지 확인해주세요.")
+    }
+
+
     try {
       const params = {
         ...userData,
@@ -90,6 +92,21 @@ const BaZi = () => {
     }
   };
 
+  /** reset button event */
+  const handleClickReset = () => {
+
+    setLoading(false)
+    setUserData({
+      userName: "", //유저이름
+      gender: "", //유저성별
+      birthDate: "", //유저생년월일
+      birthMoon: "", //생년월일 양력,음력,윤달
+      birthTime: "", //유저출생시간
+      unknown: "", //출생시간 모를때
+    })
+
+  }
+
   return (
     <div className="flex flex-col flex-1 justify-between items-center">
       <section className="flex flex-col flex-1 w-full max-w-[588px] rounded-[15px]">
@@ -99,7 +116,7 @@ const BaZi = () => {
           ))}
         </div>
 
-        <div className="bg-white flex-1 rounded-b-[15px] p-3">
+        <div className="bg-white flex-1 rounded-b-[15px] p-3 overflow-scroll">
           {!loading ? (
             <ul>
               {userInfo.map((list) => (
@@ -116,7 +133,7 @@ const BaZi = () => {
                       placeholder={list.placeholder}
                       type={list.type}
                       onChange={handleChangeInput}
-                      maxLength={list.name === "birthDate" ? 7 : undefined}
+                      maxLength={list.name === "birthDate" ? 9 : undefined}
                     />
                   </div>
 
@@ -139,8 +156,9 @@ const BaZi = () => {
                 GPT에게 물어보기!
               </button>
             ) : (
-              <button onClick={() => setLoading(false)} className="w-full p-3 hover:bg-[#3D3D3D] hover:text-white">
-                다시하기
+              <button onClick={handleClickReset} className="w-full p-3 hover:bg-[#3D3D3D] hover:text-white flex items-center justify-center gap-[10px]">
+                <RotateCcw />
+                <span>다시하기</span>
               </button>
             )}
           </div>

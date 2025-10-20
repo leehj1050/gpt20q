@@ -15,7 +15,7 @@ export const userInfo: UserInfoType[] = [
     },
 
     {
-        id: "user_birthday", title: "생년월일", name: "birthDate", placeholder: "911015", type: "text", child: [
+        id: "user_birthday", title: "생년월일", name: "birthDate", placeholder: "19911015", type: "text", child: [
             { id: "birthday_solar", title: "양력", name: "birthMoon", type: "radio" },
             { id: "birthday_lunar", title: "음력", name: "birthMoon", type: "radio" },
             { id: "birthday_leap", title: "윤달", name: "birthMoon", type: "radio" },

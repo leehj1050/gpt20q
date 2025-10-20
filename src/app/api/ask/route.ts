@@ -13,27 +13,23 @@ export async function POST(req: any, res: any) {
     사용자가 입력한 정보는 다음과 같습니다
     이름: ${userName}
     생년월일: ${birthDate} (${birthMoon})
-    출생시간: ${unknown === "birth_time_unknown" ? "모름" : birthTime} 입니다.
+    출생시간: ${!birthTime || unknown === "birth_time_unknown" ? "모름" : birthTime} 입니다.
     위 정보를 기반으로 사주팔자를 분석해 주세요.
 
     단, 결과는 아래 형식의 JSON으로만 출력해주세요.
 
     {
-      "summary": "한 문장으로 요약된 전체 분석",
-      "year": { "title": "년주", "description": "내용" },
-      "month": { "title": "월주", "description": "내용" },
-      "day": { "title": "일주", "description": "내용" },
-      "time": { "title": "시주", "description": "내용" },
-      "analysis": {
-        "personality": "내용",
-        "wealth": "내용",
-        "relationship": "내용",
-        "career": "내용"
-      }
+      "summary": ${userName}님의 사주요약입니다. "한 문장으로 요약된 전체 분석" ,
+      "personality": "내용",
+      "wealth": "내용",
+      "relationship": "내용",
+      "career": "내용",
+      "yinYangFiveElements": "음양오행에대한 내용을 적어줘."
     }
 
     JSON 외의 문장은 절대 포함하지 마세요.
   `;
+
 
   const messages: any = [
     { role: "system", content: systemPrompt },
