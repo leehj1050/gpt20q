@@ -4,21 +4,42 @@ import OpenAI from "openai";
 const openai = new OpenAI({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY });
 
 export async function POST(req: any, res: any) {
-  const request = await req.json();
-  const { question, secret, history } = request;
+  const body = await req.json(); // JSON 본문 파싱
+  const { birthDate, birthMoon, birthTime, gender, unknown, userName } = body;
 
   const systemPrompt = `
-  너는 지금 스무고개 게임의 진행자야.
-  정답은 "${secret}"이야. 사용자는 스무번의 질문을 할 수 있어.
-  사용자가 질문을 하면 답변해줘. 그리고 추가로 몇번 질문했는지 횟수도 알려줘.
-  단, 정답을 직접 언급하거나 힌트를 노골적으로 주면 안 돼.
+    당신은 뛰어난 사주 전문가 입니다.
+    사용자가 입력한 정보를 바탕으로 사주팔자를 분석해 주세요.
+    사용자가 입력한 정보는 다음과 같습니다
+    이름: ${userName}
+    생년월일: ${birthDate} (${birthMoon})
+    출생시간: ${unknown === "birth_time_unknown" ? "모름" : birthTime} 입니다.
+    위 정보를 기반으로 사주팔자를 분석해 주세요.
+
+    단, 결과는 아래 형식의 JSON으로만 출력해주세요.
+
+    {
+      "summary": "한 문장으로 요약된 전체 분석",
+      "year": { "title": "년주", "description": "내용" },
+      "month": { "title": "월주", "description": "내용" },
+      "day": { "title": "일주", "description": "내용" },
+      "time": { "title": "시주", "description": "내용" },
+      "analysis": {
+        "personality": "내용",
+        "wealth": "내용",
+        "relationship": "내용",
+        "career": "내용"
+      }
+    }
+
+    JSON 외의 문장은 절대 포함하지 마세요.
   `;
 
   const messages: any = [
     { role: "system", content: systemPrompt },
-    ...history.map((h: any) => ({ role: "user", content: h.question })),
-    ...history.map((h: any) => ({ role: "assistant", content: h.answer })),
-    { role: "user", content: question },
+    // ...history.map((h: any) => ({ role: "user", content: h.question })),
+    // ...history.map((h: any) => ({ role: "assistant", content: h.answer })),
+    // { role: "user", content: question },
   ];
 
   const completion = await openai.chat.completions.create({
@@ -27,5 +48,16 @@ export async function POST(req: any, res: any) {
     temperature: 0.7,
   });
 
-  return NextResponse.json({ answer: completion.choices[0].message.content });
+  const raw = completion.choices[0].message.content ?? "";
+
+  // GPT가 보낸 문자열을 객체로 변환
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch (err) {
+    console.error("JSON 파싱 실패:", err);
+    parsed = { error: "invalid json format", raw };
+  }
+
+  return NextResponse.json({ answer: parsed });
 }
