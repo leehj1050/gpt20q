@@ -72,9 +72,11 @@ const BaZi = () => {
   /** post : gpt api */
   const handleClickEvent = async () => {
     if (!userData.userName || !userData.gender || !userData.birthDate || !userData.birthMoon) {
-      alert("빠진정보가 없는지 확인해주세요.")
+      alert("빠진정보가 없는지 확인해주세요.");
+      return;
     }
 
+    setLoading(true); // ✅ 로딩 시작
 
     try {
       const params = {
@@ -86,16 +88,16 @@ const BaZi = () => {
       const response = await axios.post("/api/ask", params);
 
       setAnswerData(response.data.answer);
-      setLoading(true);
     } catch (error) {
       console.error("API 요청 중 오류 발생 : ", error);
+    } finally {
+      setLoading(false); // ✅ 성공/실패 상관없이 로딩 종료
     }
   };
 
   /** reset button event */
   const handleClickReset = () => {
-
-    setLoading(false)
+    setAnswerData(undefined);
     setUserData({
       userName: "", //유저이름
       gender: "", //유저성별
@@ -103,21 +105,27 @@ const BaZi = () => {
       birthMoon: "", //생년월일 양력,음력,윤달
       birthTime: "", //유저출생시간
       unknown: "", //출생시간 모를때
-    })
-
-  }
+    });
+  };
 
   return (
-    <div className="flex flex-col flex-1 justify-between items-center">
-      <section className="flex flex-col flex-1 w-full max-w-[588px] rounded-[15px]">
-        <div className="bg-[#3D3D3D] h-[35px] rounded-t-[15px] flex pl-4 gap-[8px] items-center">
+    <div className="flex flex-col flex-1 justify-between items-center w-full max-w-[1200px]">
+      <section className="flex flex-col flex-1 w-full rounded-[15px]">
+        {/* <div className="bg-[#3D3D3D] h-[35px] rounded-t-[15px] flex pl-4 gap-[8px] items-center">
           {ButtonList.map((button) => (
             <span key={button.id} className="w-[13px] h-[13px] rounded-full" style={{ backgroundColor: button.color }} />
           ))}
-        </div>
+        </div> */}
 
-        <div className="bg-white flex-1 rounded-b-[15px] p-3 overflow-scroll">
-          {!loading ? (
+        <div className="bg-white flex-1 rounded-b-[15px] p-3  ">
+          {loading ? (
+            // 1️⃣ 로딩 중일 때
+            <Pending />
+          ) : answerData ? (
+            // 2️⃣ API 요청 완료 후 (응답 데이터가 있을 때)
+            <Answer answer={answerData} />
+          ) : (
+            // 3️⃣ 초기 상태 (입력 폼)
             <ul>
               {userInfo.map((list) => (
                 <li key={list.id} className="text-black">
@@ -127,7 +135,7 @@ const BaZi = () => {
                     </label>
                     <input
                       value={userData[list.name as keyof typeof userData] || ""}
-                      className=" border-b-[1px] focus:outline-none "
+                      className="border-b-[1px] focus:outline-none"
                       id={list.id}
                       name={list.name}
                       placeholder={list.placeholder}
@@ -146,19 +154,20 @@ const BaZi = () => {
                 </li>
               ))}
             </ul>
-          ) : (
-            <Answer answer={answerData} />
           )}
 
           <div className="border border-black text-black flex rounded ">
-            {!loading ? (
-              <button onClick={handleClickEvent} className="w-full p-3 hover:bg-[#3D3D3D] hover:text-white">
-                GPT에게 물어보기!
-              </button>
-            ) : (
+            {loading ? (
+              // 로딩 중일 때는 버튼 비활성화
+              <></>
+            ) : answerData ? (
               <button onClick={handleClickReset} className="w-full p-3 hover:bg-[#3D3D3D] hover:text-white flex items-center justify-center gap-[10px]">
                 <RotateCcw />
                 <span>다시하기</span>
+              </button>
+            ) : (
+              <button onClick={handleClickEvent} className="w-full p-3 hover:bg-[#3D3D3D] hover:text-white">
+                GPT에게 물어보기!
               </button>
             )}
           </div>

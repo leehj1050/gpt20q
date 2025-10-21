@@ -20,13 +20,19 @@ const Answer = ({ answer }: { answer: any }) => {
         <h3 className="text-xl font-bold">재물운</h3>
         <p>{answer.wealth}</p>
       </div>
+
       <div>
         <h3 className="text-xl font-bold">인간관계</h3>
         <p>{answer.relationship}</p>
       </div>
 
       <div>
-        <h3 className="text-xl font-bold">직업적 적성</h3>
+        <h3 className="text-xl font-bold">연애운</h3>
+        <p>{answer.romanticFortune}</p>
+      </div>
+
+      <div>
+        <h3 className="text-xl font-bold">직업운</h3>
         <p>{answer.career}</p>
       </div>
 
@@ -34,7 +40,6 @@ const Answer = ({ answer }: { answer: any }) => {
         <h3 className="text-xl font-bold">음양오행</h3>
         <p>{answer.yinYangFiveElements}</p>
       </div>
-
     </div>
   );
 };

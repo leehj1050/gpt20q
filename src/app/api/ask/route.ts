@@ -19,17 +19,17 @@ export async function POST(req: any, res: any) {
     단, 결과는 아래 형식의 JSON으로만 출력해주세요.
 
     {
-      "summary": ${userName}님의 사주요약입니다. "한 문장으로 요약된 전체 분석" ,
-      "personality": "내용",
-      "wealth": "내용",
-      "relationship": "내용",
-      "career": "내용",
-      "yinYangFiveElements": "음양오행에대한 내용을 적어줘."
+      "summary": ${userName}님의 사주요약입니다. "한문장으로 전체 사주에대한 요약을 적어줘." ,
+      "personality": "성격에 대한 사주내용을 좀 더 구체적으로 자세히 적어줘.",
+      "wealth": "재물운에 대한 사주내용을 좀 더 구체적으로 자세히 적어줘.",
+      "romanticFortune": "연애운에 대한 사주내용을 좀 더 구체적으로 자세히 적어줘.",
+      "relationship": "인간관계에 대한 사주내용을 좀 더 구체적으로 자세히 적어줘.",
+      "career": "직업운에 대한 사주내용을 좀 더 구체적으로 자세히 적어줘.",
+      "yinYangFiveElements": "음양오행에대한 사주내용을 좀 더 구체적으로 자세히 적어줘."
     }
 
     JSON 외의 문장은 절대 포함하지 마세요.
   `;
-
 
   const messages: any = [
     { role: "system", content: systemPrompt },
