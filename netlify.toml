@@ -4,3 +4,9 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+
+# ✅ 이 설정 추가
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["openai"]
