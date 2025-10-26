@@ -3,7 +3,7 @@ import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 
-const openai = new OpenAI({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY ?? "" }); //undefined 방지
 
 export async function POST(req: NextRequest) {
   const body = await req.json(); // JSON 본문 파싱

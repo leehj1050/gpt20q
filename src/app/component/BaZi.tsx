@@ -146,7 +146,6 @@ const BaZi = () => {
       if ("showPicker" in el) {
         el.showPicker();
       } else {
-        el.focus();
       }
     }
   };
