@@ -1,19 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+
 
 const openai = new OpenAI({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY });
 
-export async function POST(req: any, res: any) {
+export async function POST(req: NextRequest) {
   const body = await req.json(); // JSON 본문 파싱
-  const { birthDate, birthMoon, birthTime, gender, unknown, userName } = body;
+  const { userName, gender, birthDate, birthMoon, birthTime, unknown } = body;
 
   const systemPrompt = `
     당신은 뛰어난 사주 전문가 입니다.
     사용자가 입력한 정보를 바탕으로 사주팔자를 분석해 주세요.
     사용자가 입력한 정보는 다음과 같습니다
     이름: ${userName}
+    성별: ${gender}
     생년월일: ${birthDate} (${birthMoon})
-    출생시간: ${!birthTime || unknown === "birth_time_unknown" ? "모름" : birthTime} 입니다.
+    출생시간: ${unknown ? "모름" : birthTime} 입니다.
     위 정보를 기반으로 사주팔자를 분석해 주세요.
 
     단, 결과는 아래 형식의 JSON으로만 출력해주세요.
@@ -31,7 +34,7 @@ export async function POST(req: any, res: any) {
     JSON 외의 문장은 절대 포함하지 마세요.
   `;
 
-  const messages: any = [
+  const messages: ChatCompletionMessageParam[] = [
     { role: "system", content: systemPrompt },
     // ...history.map((h: any) => ({ role: "user", content: h.question })),
     // ...history.map((h: any) => ({ role: "assistant", content: h.answer })),

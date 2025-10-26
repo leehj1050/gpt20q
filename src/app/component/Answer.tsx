@@ -1,44 +1,35 @@
 import React from "react";
+import { AnswerData } from "../types";
 
-const Answer = ({ answer }: { answer: any }) => {
-  console.log("answer > ", answer);
+const Answer = ({ answer }: { answer: AnswerData }) => {
+  if (!answer) return null;
+
+  const sections = [
+    { title: "🔮 사주 전체 요약", content: answer.summary },
+    { title: "🌿 성격", content: answer.personality },
+    { title: "💰 재물운", content: answer.wealth },
+    { title: "👥 인간관계", content: answer.relationship },
+    { title: "💞 연애운", content: answer.romanticFortune },
+    { title: "💼 직업운", content: answer.career },
+    { title: "☯️ 음양오행", content: answer.yinYangFiveElements },
+  ];
+
   return (
-    <div className="text-black flex flex-col">
-      <h2 className="text-2xl font-bold mb-4">분석 결과</h2>
+    <div className="animate-fade-in">
+      {/* 헤더 */}
+      <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-[#8B5CF6] to-[#FACC15] text-transparent bg-clip-text">✨ 사주 분석 결과 ✨</h2>
 
-      <div>
-        <h3 className="text-xl font-bold">사주 전체 요약</h3>
-        <p>{answer.summary}</p>
-      </div>
+      {/* 스크롤 영역 (Tailwind만으로 구현) */}
+      <div className="space-y-6">
+        {sections.map((section, idx) => (
+          <div key={idx} className="mb-6">
+            <h3 className="text-xl font-semibold text-[#FACC15] mb-2">{section.title}</h3>
+            <p className="text-gray-300 leading-relaxed whitespace-pre-line">{section.content || "정보가 부족합니다."}</p>
 
-      <div>
-        <h3 className="text-xl font-bold">성격</h3>
-        <p>{answer.personality}</p>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-bold">재물운</h3>
-        <p>{answer.wealth}</p>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-bold">인간관계</h3>
-        <p>{answer.relationship}</p>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-bold">연애운</h3>
-        <p>{answer.romanticFortune}</p>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-bold">직업운</h3>
-        <p>{answer.career}</p>
-      </div>
-
-      <div>
-        <h3 className="text-xl font-bold">음양오행</h3>
-        <p>{answer.yinYangFiveElements}</p>
+            {/* 구분선 (Separator 대체) */}
+            {idx < sections.length - 1 && <div className="my-5 h-[1px] w-full bg-gradient-to-r from-transparent via-[#8B5CF6]/30 to-transparent" />}
+          </div>
+        ))}
       </div>
     </div>
   );

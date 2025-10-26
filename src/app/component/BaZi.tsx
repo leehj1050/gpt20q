@@ -1,178 +1,266 @@
 "use client";
 import axios from "axios";
-import React, { ReactHTMLElement, useState } from "react";
-import { ButtonList, userInfo } from "./config";
+import React, { useRef, useState } from "react";
 import Answer from "./Answer";
-import { RotateCcw } from "lucide-react";
 import Pending from "../UI/Pending";
+import { AnswerData } from "../types";
 
 const genderMap: Record<string, string> = {
-  gender_femail: "여성",
-  gender_mail: "남성",
+  femail: "여성",
+  mail: "남성",
 };
 
 const birthMoonMap: Record<string, string> = {
-  birthday_solar: "양력",
-  birthday_lunar: "음력",
-  birthday_yundal: "윤달",
+  solar: "양력",
+  lunar: "음력",
+  yundal: "윤달",
 };
 
 const BaZi = () => {
   const [loading, setLoading] = useState(false);
-  const [answerData, setAnswerData] = useState();
+  const [answerData, setAnswerData] = useState<AnswerData | null>(null);
 
   const [userData, setUserData] = useState({
     userName: "", //유저이름
-    gender: "", //유저성별
+    gender: "male", //유저성별
     birthDate: "", //유저생년월일
-    birthMoon: "", //생년월일 양력,음력,윤달
+    birthMoon: "solar", //생년월일 양력,음력,윤달
     birthTime: "", //유저출생시간
-    unknown: "", //출생시간 모를때
+    unknown: false, //출생시간 모를때
   });
 
   /** text type input 이벤트 */
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, id, checked } = e.target;
+    const { name, value, type, checked } = e.target;
 
-    if (type === "text" || type === "time") {
-      setUserData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-      return;
-    }
-
-    if (type === "radio") {
-      setUserData((prev) => ({
-        ...prev,
-        [name]: id,
-      }));
-      return;
-    }
-
-    if (type === "checkbox") {
-      // 체크된 경우
-      if (checked) {
+    switch (type) {
+      case "text": // 이름
         setUserData((prev) => ({
           ...prev,
-          birthTime: "",
-          unknown: id, // 체크 시 unknown에 값 세팅
+          [name]: value,
         }));
-      } else {
-        // 체크 해제 시 unknown 초기화
+        return;
+      case "date": // 생년월일
         setUserData((prev) => ({
           ...prev,
-          unknown: "",
+          [name]: value,
         }));
-      }
-      return;
+        return;
+      case "time": // 출생시간
+        setUserData((prev) => ({
+          ...prev,
+          [name]: value,
+          unknown: false,
+        }));
+        return;
+      case "checkbox": // checkbox "모름"
+        if (checked) {
+          setUserData((prev) => ({
+            ...prev,
+            [name]: true,
+            birthTime: "",
+          }));
+          return;
+        }
+    }
+  };
+
+  const handleSelectOptions = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+
+    // 두 select 모두 같은 핸들러 쓰므로 name이나 id로 구분 필요
+    // 양력/음력/윤달 select
+    if (["solar", "lunar", "leap"].includes(value)) {
+      setUserData((prev) => ({
+        ...prev,
+        birthMoon: value,
+      }));
+    }
+
+    // 성별 select
+    if (["male", "female"].includes(value)) {
+      setUserData((prev) => ({
+        ...prev,
+        gender: value,
+      }));
     }
   };
 
   /** post : gpt api */
   const handleClickEvent = async () => {
-    if (!userData.userName || !userData.gender || !userData.birthDate || !userData.birthMoon) {
-      alert("빠진정보가 없는지 확인해주세요.");
-      return;
+    if (!answerData) {
+      // "운세보기" 모드
+      if (!userData.userName || !userData.birthDate) {
+        alert("빠진정보가 없는지 확인해주세요.");
+        return;
+      }
+      if (userData.birthTime === "" && !userData.unknown) {
+        alert("출생시간이 없으면 모름에 체크해주세요.");
+        return;
+      }
+
+      setLoading(true); // ✅ 로딩 시작
+
+      try {
+        const params = {
+          ...userData,
+          gender: genderMap[userData.gender],
+          birthMoon: birthMoonMap[userData.birthMoon],
+        };
+
+        const response = await axios.post("/api/ask", params);
+
+        setAnswerData(response.data.answer);
+      } catch (error) {
+        console.error("API 요청 중 오류 발생 : ", error);
+      } finally {
+        setLoading(false); // ✅ 성공/실패 상관없이 로딩 종료
+      }
+    } else {
+      // "다시보기" 모드
+      // 폼 초기화 & 결과 리셋
+      setUserData({
+        userName: "", //유저이름
+        gender: "male", //유저성별
+        birthDate: "", //유저생년월일
+        birthMoon: "solar", //생년월일 양력,음력,윤달
+        birthTime: "", //유저출생시간
+        unknown: false, //출생시간 모를때
+      });
+      setAnswerData(null)
     }
 
-    setLoading(true); // ✅ 로딩 시작
 
-    try {
-      const params = {
-        ...userData,
-        gender: genderMap[userData.gender],
-        birthMoon: birthMoonMap[userData.birthMoon],
-      };
+  };
 
-      const response = await axios.post("/api/ask", params);
+  //-----// Ref for date and time inputs
 
-      setAnswerData(response.data.answer);
-    } catch (error) {
-      console.error("API 요청 중 오류 발생 : ", error);
-    } finally {
-      setLoading(false); // ✅ 성공/실패 상관없이 로딩 종료
+  const dateRef = useRef<HTMLInputElement>(null);
+  const timeRef = useRef<HTMLInputElement>(null);
+
+  const openDatePicker = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const el = dateRef.current as any;
+
+    if (el) {
+      if ("showPicker" in el) {
+        el.showPicker();
+      } else {
+        el.focus();
+      }
     }
   };
 
-  /** reset button event */
-  const handleClickReset = () => {
-    setAnswerData(undefined);
-    setUserData({
-      userName: "", //유저이름
-      gender: "", //유저성별
-      birthDate: "", //유저생년월일
-      birthMoon: "", //생년월일 양력,음력,윤달
-      birthTime: "", //유저출생시간
-      unknown: "", //출생시간 모를때
-    });
+  const openTimePicker = () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const el = timeRef.current as any; // ✅ 명시적 단언;
+
+    if (el) {
+      if ("showPicker" in el) {
+        el.showPicker();
+      } else {
+        el.focus();
+      }
+    }
   };
 
   return (
-    <div className="flex flex-col flex-1 justify-between items-center w-full max-w-[1200px]">
-      <section className="flex flex-col flex-1 w-full rounded-[15px]">
-        {/* <div className="bg-[#3D3D3D] h-[35px] rounded-t-[15px] flex pl-4 gap-[8px] items-center">
-          {ButtonList.map((button) => (
-            <span key={button.id} className="w-[13px] h-[13px] rounded-full" style={{ backgroundColor: button.color }} />
-          ))}
-        </div> */}
+    <div className="w-full h-full flex flex-1 flex-col">
+      {/* 내용이 많으면 이 영역만 스크롤되도록 */}
+      <div className="h-full flex flex-col justify-between">
+        {loading ? (
+          <Pending />
+        ) : !answerData ? (
+          <form className=" flex flex-col gap-8 ">
+            <div>
+              <label className="block mb-1 text-gray-300">이름</label>
+              <input
+                value={userData.userName}
+                name="userName"
+                type="text"
+                placeholder="홍길동"
+                className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] outline-none"
+                onChange={handleChangeInput}
+              />
+            </div>
 
-        <div className="bg-white flex-1 rounded-b-[15px] p-3  ">
-          {loading ? (
-            // 1️⃣ 로딩 중일 때
-            <Pending />
-          ) : answerData ? (
-            // 2️⃣ API 요청 완료 후 (응답 데이터가 있을 때)
-            <Answer answer={answerData} />
-          ) : (
-            // 3️⃣ 초기 상태 (입력 폼)
-            <ul>
-              {userInfo.map((list) => (
-                <li key={list.id} className="text-black">
-                  <div className="flex gap-[5px] flex-1">
-                    <label className="font-[600]" htmlFor={list.id}>
-                      {list.title}
-                    </label>
-                    <input
-                      value={userData[list.name as keyof typeof userData] || ""}
-                      className="border-b-[1px] focus:outline-none"
-                      id={list.id}
-                      name={list.name}
-                      placeholder={list.placeholder}
-                      type={list.type}
-                      onChange={handleChangeInput}
-                      maxLength={list.name === "birthDate" ? 9 : undefined}
-                    />
-                  </div>
+            <div className="flex gap-3">
+              <select value={userData.birthMoon} className="flex-1 bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]" onChange={handleSelectOptions}>
+                <option value="solar" id="solar">
+                  양력
+                </option>
+                <option value="lunar" id="lunar">
+                  음력
+                </option>
+                <option value="leap" id="leap">
+                  윤달
+                </option>
+              </select>
+              <select value={userData.gender} className="flex-1 bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]" onChange={handleSelectOptions}>
+                <option value="male">남자</option>
+                <option value="female">여자</option>
+              </select>
+            </div>
 
-                  {list.child.map((child) => (
-                    <div key={child.id} className="flex gap-[5px] flex-1">
-                      <label htmlFor={child.id}>{child.title}</label>
-                      <input id={child.id} key={child.id} type={child.type} name={child.name} onChange={handleChangeInput} />
-                    </div>
-                  ))}
-                </li>
-              ))}
-            </ul>
-          )}
+            <div onClick={openDatePicker}>
+              <label htmlFor="birthDate" className="block mb-1 text-gray-300">
+                생년월일
+              </label>
+              <input
+                value={userData.birthDate}
+                name="birthDate"
+                ref={dateRef}
+                id="birthDate"
+                type="date"
+                className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]"
+                onChange={handleChangeInput}
+              />
+            </div>
 
-          <div className="border border-black text-black flex rounded ">
-            {loading ? (
-              // 로딩 중일 때는 버튼 비활성화
-              <></>
-            ) : answerData ? (
-              <button onClick={handleClickReset} className="w-full p-3 hover:bg-[#3D3D3D] hover:text-white flex items-center justify-center gap-[10px]">
-                <RotateCcw />
-                <span>다시하기</span>
-              </button>
-            ) : (
-              <button onClick={handleClickEvent} className="w-full p-3 hover:bg-[#3D3D3D] hover:text-white">
-                GPT에게 물어보기!
-              </button>
-            )}
-          </div>
-        </div>
-      </section>
+            <div onClick={openTimePicker}>
+              <label htmlFor="birthTime" className="block mb-1 text-gray-300">
+                출생 시간
+              </label>
+              <input
+                value={userData.birthTime}
+                name="birthTime"
+                ref={timeRef}
+                id="birthTime"
+                type="time"
+                className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]"
+                onChange={handleChangeInput}
+              />
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
+              <p className="text-xs text-gray-500 mt-1">모르면 '모름'에 체크하세요</p>
+            </div>
+
+            <div className="flex gap-3">
+              <label htmlFor="unknown" className="block text-gray-300 ">
+                모름
+              </label>
+              <input
+                name="unknown"
+                id="unknown"
+                type="checkbox"
+                className=" bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]"
+                onChange={handleChangeInput}
+                checked={userData.unknown}
+              />
+            </div>
+          </form>
+        ) : (
+          <Answer answer={answerData} />
+        )}
+
+        {/** 버튼 */}
+        <button
+          disabled={loading ? true : false}
+          type="button"
+          onClick={handleClickEvent}
+          className="w-full mt-4 py-3 bg-gradient-to-r from-[#8B5CF6] to-[#FACC15] text-black font-semibold rounded-lg shadow-lg hover:scale-[1.02] transition">
+          {loading ? "로딩중.." : !answerData ? "운세 보기 🔮" : "다시 보기 🔁"}
+        </button>
+      </div>
     </div>
   );
 };
