@@ -211,7 +211,7 @@ const BaZi = () => {
                 ref={dateRef}
                 id="birthDate"
                 type="date"
-                className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]"
+                className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6] appearance-none"
                 onChange={handleChangeInput}
               />
             </div>
@@ -226,7 +226,7 @@ const BaZi = () => {
                 ref={timeRef}
                 id="birthTime"
                 type="time"
-                className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]"
+                className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6] appearance-none"
                 onChange={handleChangeInput}
               />
               {/* eslint-disable-next-line react/no-unescaped-entities */}
@@ -241,7 +241,7 @@ const BaZi = () => {
                 name="unknown"
                 id="unknown"
                 type="checkbox"
-                className=" bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]"
+                className="bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6]"
                 onChange={handleChangeInput}
                 checked={userData.unknown}
               />
