@@ -3,7 +3,11 @@ import axios from "axios";
 import React, { useRef, useState } from "react";
 import Answer from "./Answer";
 import Pending from "../UI/Pending";
-import { AnswerData } from "../types";
+import { useUserStore } from "../../../store/userDataStore";
+import { useUserFormHandlers } from "../utils/useUserFormHandlers";
+import { useAnswerStore } from "../../../store/useAnswerStore";
+import { useSelectedStore } from "../../../store/useSelectedStore";
+import { useRouter } from "next/navigation";
 
 const genderMap: Record<string, string> = {
   femail: "여성",
@@ -16,75 +20,22 @@ const birthMoonMap: Record<string, string> = {
   yundal: "윤달",
 };
 
-const BaZi = () => {
+const BaZi = ({ type }: { type: string }) => {
+  const router = useRouter();
+  const sajuType = type //사주타입
   const [loading, setLoading] = useState(false);
-  const [answerData, setAnswerData] = useState<AnswerData | null>(null);
+  //ref
+  const dateRef = useRef<HTMLInputElement>(null);
+  const timeRef = useRef<HTMLInputElement>(null);
 
-  const [userData, setUserData] = useState({
-    userName: "", //유저이름
-    gender: "male", //유저성별
-    birthDate: "", //유저생년월일
-    birthMoon: "solar", //생년월일 양력,음력,윤달
-    birthTime: "", //유저출생시간
-    unknown: false, //출생시간 모를때
-  });
 
-  /** text type input 이벤트 */
-  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
+  // store
+  const { userData, setUserData } = useUserStore()
+  const { answerData, setAnswerData, clearAnswerData } = useAnswerStore()
+  const { handleChangeInput, handleSelectOptions } = useUserFormHandlers()
+  const { resetSelectedType } = useSelectedStore()
 
-    switch (type) {
-      case "text": // 이름
-        setUserData((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-        return;
-      case "date": // 생년월일
-        setUserData((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-        return;
-      case "time": // 출생시간
-        setUserData((prev) => ({
-          ...prev,
-          [name]: value,
-          unknown: false,
-        }));
-        return;
-      case "checkbox": // checkbox "모름"
-        if (checked) {
-          setUserData((prev) => ({
-            ...prev,
-            [name]: true,
-            birthTime: "",
-          }));
-          return;
-        }
-    }
-  };
 
-  const handleSelectOptions = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-
-    // 두 select 모두 같은 핸들러 쓰므로 name이나 id로 구분 필요
-    // 양력/음력/윤달 select
-    if (["solar", "lunar", "leap"].includes(value)) {
-      setUserData((prev) => ({
-        ...prev,
-        birthMoon: value,
-      }));
-    }
-
-    // 성별 select
-    if (["male", "female"].includes(value)) {
-      setUserData((prev) => ({
-        ...prev,
-        gender: value,
-      }));
-    }
-  };
 
   /** post : gpt api */
   const handleClickEvent = async () => {
@@ -127,16 +78,13 @@ const BaZi = () => {
         birthTime: "", //유저출생시간
         unknown: false, //출생시간 모를때
       });
-      setAnswerData(null)
+      clearAnswerData()
+      resetSelectedType() // 리셋해야 컴포넌트가 제일 처음 컴포넌트로 돌아감.
+      // 🔥 hash 제거 + 루트로 완전 교체
+      router.replace("/");
     }
-
-
   };
 
-  //-----// Ref for date and time inputs
-
-  const dateRef = useRef<HTMLInputElement>(null);
-  const timeRef = useRef<HTMLInputElement>(null);
 
   const openDatePicker = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -265,3 +213,4 @@ const BaZi = () => {
 };
 
 export default BaZi;
+
