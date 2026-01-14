@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import BaZi from "./BaZi";
 import { FaYinYang } from "react-icons/fa";
 import { GiHearts, GiCrystalBall, GiStarSwirl } from "react-icons/gi";
-import { useSelectedStore } from "../../../store/useSelectedStore";
+import { useSelectedStore } from "../store/useSelectedStore";
 
 const menuList = [
     { id: "newyear", title: "신년운세", icon: <GiStarSwirl className="text-3xl text-[#FACC15]" />, desc: "새해의 운세를 미리 확인하세요." },
@@ -21,7 +21,6 @@ const MainSelect = () => {
     useEffect(() => {
         const handlePopState = () => {
             const hash = window.location.hash.replace("#", "") as string;
-            console.log('hash >>> ', hash)
             if (!hash) {
                 // 해시가 없으면 홈으로 (선택타입을 리셋)
                 resetSelectedType();

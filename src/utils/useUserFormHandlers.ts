@@ -2,7 +2,7 @@
  * userData변경에 필요한 기능로직
  */
 
-import { useUserStore } from "../../../store/userDataStore";
+import { useUserStore } from "../../store/userDataStore";
 
 export const useUserFormHandlers = () => {
     const {  setUserData } = useUserStore()

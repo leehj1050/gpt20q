@@ -29,7 +29,7 @@
 // }
 
 import { Gowun_Batang } from "next/font/google";
-import MainSelect from "./component/MainSelect";
+import MainSelect from "../component/MainSelect";
 
 const gowun = Gowun_Batang({ weight: ["400", "700"], subsets: ["latin"] });
 
