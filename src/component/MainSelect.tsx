@@ -1,46 +1,31 @@
-"use client";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import BaZi from "./BaZi";
 import { FaYinYang } from "react-icons/fa";
 import { GiHearts, GiCrystalBall, GiStarSwirl } from "react-icons/gi";
 import { useSelectedStore } from "../store/useSelectedStore";
+import { SajuType } from "@/app/types";
 
-const menuList = [
+interface MenuListType {
+    id: SajuType;
+    title: string;
+    icon: React.ReactNode
+    desc: string;
+}
+
+const menuList: MenuListType[] = [
     { id: "newyear", title: "신년운세", icon: <GiStarSwirl className="text-3xl text-[#FACC15]" />, desc: "새해의 운세를 미리 확인하세요." },
     { id: "saju", title: "사주풀이", icon: <FaYinYang className="text-3xl text-[#8B5CF6]" />, desc: "당신의 사주팔자를 깊이 분석합니다." },
     { id: "today", title: "오늘의 운세", icon: <GiCrystalBall className="text-3xl text-[#4ADE80]" />, desc: "오늘 하루의 기운과 흐름을 확인하세요." },
     { id: "match", title: "궁합", icon: <GiHearts className="text-3xl text-[#F87171]" />, desc: "두 사람의 인연과 궁합을 알아보세요." },
-];
+]
 
 const MainSelect = () => {
-    const { selectedType, setSelectedType, resetSelectedType } = useSelectedStore()
-
-
-    // ✅ 뒤로가기(popstate) 이벤트 감지 → 홈화면으로 복귀
-    useEffect(() => {
-        const handlePopState = () => {
-            const hash = window.location.hash.replace("#", "") as string;
-            if (!hash) {
-                // 해시가 없으면 홈으로 (선택타입을 리셋)
-                resetSelectedType();
-            } else {
-                // 해시가 있으면 해당 상태 복원
-                setSelectedType(hash);
-            }
-        };
-
-        // 초기 로딩 시 해시 확인
-        handlePopState();
-
-        window.addEventListener("popstate", handlePopState);
-        return () => window.removeEventListener("popstate", handlePopState);
-    }, []);
+    const { selectedType, setSelectedType } = useSelectedStore()
 
 
 
     // ✅ 버튼 클릭 시 해시 추가 + 상태 변경
-    const handleSelect = (type: string) => {
+    const handleSelect = (type: SajuType) => {
         if (!type) return;
 
         setSelectedType(type);
@@ -51,7 +36,7 @@ const MainSelect = () => {
 
     // ✅ 선택한 운세에 따라 폼 컴포넌트 전환
     if (selectedType) {
-        return <BaZi type={selectedType} />
+        return <BaZi />
     }
 
 

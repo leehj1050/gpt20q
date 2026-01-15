@@ -1,8 +1,9 @@
+import { SajuType } from "@/app/types";
 import { create } from "zustand";
 
 interface SelectedType {
-    selectedType: string | null
-    setSelectedType: (type: string) => void
+    selectedType: SajuType | null
+    setSelectedType: (type: SajuType) => void
     resetSelectedType: () => void;
 }
 

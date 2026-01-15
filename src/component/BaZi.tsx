@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useState } from "react";
-import Answer from "./Answer";
+import Answer from "./Answer/Answer";
 import Pending from "../UI/Pending";
 import { useUserStore } from "@/store/userDataStore";
 import { useAnswerStore } from "../store/useAnswerStore";
@@ -20,16 +20,15 @@ const birthMoonMap: Record<string, string> = {
   yundal: "윤달",
 };
 
-const BaZi = ({ type }: { type: string }) => {
+const BaZi = () => {
   const router = useRouter();
-  const sajuType = type //사주타입
   const [loading, setLoading] = useState(false);
 
   // store
   const { userData, setUserData } = useUserStore()
-  const { answerData, setAnswerData, clearAnswerData } = useAnswerStore()
+  const { answerData, setAnswerData, resetAnswerData } = useAnswerStore()
   const { resetSelectedType } = useSelectedStore()
-
+  const { selectedType } = useSelectedStore()
 
 
   /** post : gpt api */
@@ -52,11 +51,16 @@ const BaZi = ({ type }: { type: string }) => {
           ...userData,
           gender: genderMap[userData.gender],
           birthMoon: birthMoonMap[userData.birthMoon],
+          type: selectedType //사주타입
         };
 
         const response = await axios.post("/api/ask", params);
+        if (!response.data) return;
 
-        setAnswerData(response.data.answer);
+        //응답데이터를 프론트측에서 사용이 용이하도록 가공
+        const makeAnswerData = { category: selectedType, data: response.data.answer }
+
+        setAnswerData(makeAnswerData);
       } catch (error) {
         console.error("API 요청 중 오류 발생 : ", error);
       } finally {
@@ -73,7 +77,7 @@ const BaZi = ({ type }: { type: string }) => {
         birthTime: "", //유저출생시간
         unknown: false, //출생시간 모를때
       });
-      clearAnswerData()
+      resetAnswerData()
       resetSelectedType() // 리셋해야 컴포넌트가 제일 처음 컴포넌트로 돌아감.
       // 🔥 hash 제거 + 루트로 완전 교체
       router.replace("/");

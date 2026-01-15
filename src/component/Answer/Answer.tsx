@@ -1,4 +1,4 @@
-import { useAnswerStore } from "../store/useAnswerStore";
+import { useAnswerSections } from "@/store/useAnswerSectionStore";
 
 const genderMap: Record<string, string> = {
   femail: "여성",
@@ -11,18 +11,11 @@ const birthMoonMap: Record<string, string> = {
   yundal: "윤달",
 };
 
-const Answer = ({ onClick }: { onClick: () => void }) => {
-  const { answerData } = useAnswerStore()
 
-  const sections = [
-    { title: "🔮 사주 전체 요약", content: answerData?.summary },
-    { title: "🌿 성격", content: answerData?.personality },
-    { title: "💰 재물운", content: answerData?.wealth },
-    { title: "👥 인간관계", content: answerData?.relationship },
-    { title: "💞 연애운", content: answerData?.romanticFortune },
-    { title: "💼 직업운", content: answerData?.career },
-    { title: "☯️ 음양오행", content: answerData?.yinYangFiveElements },
-  ]
+const Answer = ({ onClick }: { onClick: () => void }) => {
+
+  //store
+  const sections = useAnswerSections();
 
 
   return (
@@ -34,7 +27,7 @@ const Answer = ({ onClick }: { onClick: () => void }) => {
 
           {/* 스크롤 영역 (Tailwind만으로 구현) */}
           <div className="space-y-6">
-            {sections.map((section, idx) => (
+            {sections.length > 0 && sections.map((section, idx) => (
               <div key={idx} className="mb-6">
                 <h3 className="text-xl font-semibold text-[#FACC15] mb-2">{section.title}</h3>
                 <p className="text-gray-300 leading-relaxed whitespace-pre-line">{section.content || "정보가 부족합니다."}</p>
