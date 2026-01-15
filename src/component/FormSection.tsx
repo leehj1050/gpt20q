@@ -38,9 +38,9 @@ const FormSection = ({ onClick }: { onClick: () => void }) => {
 
 
     return (
-        <div className="w-full h-full flex flex-1 flex-col ">
-            <div className="flex flex-1 flex-col min-h-0 gap-3">
-                <form className=" flex flex-col gap-8 ">
+        <div className="w-full h-full flex flex-1 flex-col min-h-0 overflow-y-auto">
+            <div className="h-full flex flex-col gap-3 ">
+                <form className=" flex flex-col flex-1 gap-5 md:gap-8">
                     <div>
                         <label className="block mb-1 text-gray-300">이름</label>
                         <input
