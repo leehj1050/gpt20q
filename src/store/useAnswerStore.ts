@@ -27,7 +27,11 @@ export interface AnswerData {
     nov?: string;
     dec?: string;
     //오늘의운세타입
-
+    energy?: string;
+    do?: string;
+    avoid?: string;
+    lucky?: string;
+    advice?: string;
     //궁합타입
   };
 }

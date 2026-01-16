@@ -43,7 +43,7 @@ export default function Home() {
   return (
     <div className="w-full bg-gradient-to-br from-[#0B0B0D] via-[#1F1144] to-[#0B0B0D] text-white flex flex-col items-center justify-center px-4 py-10 gap-3">
       <header className="w-full max-w-2xl flex flex-col justify-center items-center shrink-0">
-        <h1 className={`${gowun.className} text-4xl md:text-5xl font-serif tracking-wider mb-3 text-[#FACC15]`}>
+        <h1 className={`${gowun.className} text-3xl md:text-5xl font-serif tracking-wider mb-3 text-[#FACC15]`}>
           오늘, 당신의 운명은?
         </h1>
         <p className="text-gray-400 text-base sm:text-lg md:text-xl lg:text-2xl">

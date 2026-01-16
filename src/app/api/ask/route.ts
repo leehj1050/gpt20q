@@ -15,7 +15,6 @@ const openai = new OpenAI({ apiKey });
 export const POST = async(req: NextRequest)=> {
   const body = await req.json(); // JSON 본문 파싱
   const { type, ...userData } = body;
-  
 
   const messages: ChatCompletionMessageParam[] = [
     { role: "system", content: systemPrompt(type,userData)},

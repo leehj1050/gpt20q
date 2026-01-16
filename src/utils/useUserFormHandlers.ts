@@ -5,7 +5,7 @@
 import { useUserStore } from "@/store/userDataStore";
 
 export const useUserFormHandlers = () => {
-    const {  setUserData } = useUserStore()
+    const { setUserData } = useUserStore()
 
   /** text type input 이벤트 */
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,13 +16,6 @@ export const useUserFormHandlers = () => {
       case "date": // 생년월일
         setUserData({
           [name]: value,
-        });
-        return;
-
-      case "time": // 출생시간
-        setUserData({
-          [name]: value,
-          unknown: false,
         });
         return;
 
@@ -40,6 +33,15 @@ export const useUserFormHandlers = () => {
         return;
     }
   };
+
+  //출생시간 선택 이벤트핸들러
+  const hadelSelectTime = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target
+    setUserData({
+          birthTime: value,
+          unknown: false,
+        });
+  }
 
   const handleSelectOptions = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { value } = e.target;
@@ -60,5 +62,5 @@ export const useUserFormHandlers = () => {
     }
   };
 
-  return{handleChangeInput , handleSelectOptions}
+  return{handleChangeInput ,hadelSelectTime, handleSelectOptions}
 }

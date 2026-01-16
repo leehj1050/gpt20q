@@ -7,7 +7,7 @@ import { useUserStore } from "@/store/userDataStore";
 import { useAnswerStore } from "../store/useAnswerStore";
 import { useSelectedStore } from "../store/useSelectedStore";
 import { useRouter } from "next/navigation";
-import FormSection from "./FormSection";
+import FormSection from "./Form/FormSection";
 
 const genderMap: Record<string, string> = {
   femail: "여성",

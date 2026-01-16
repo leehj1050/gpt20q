@@ -13,7 +13,7 @@ interface MenuListType {
 }
 
 const menuList: MenuListType[] = [
-    { id: "newyear", title: "신년운세", icon: <GiStarSwirl className="text-3xl text-[#FACC15]" />, desc: "새해의 운세를 미리 확인하세요." },
+    { id: "newyear", title: "신년운세", icon: <GiStarSwirl className="text-3xl text-[#D2691E]" />, desc: "새해의 운세를 미리 확인하세요." },
     { id: "saju", title: "사주풀이", icon: <FaYinYang className="text-3xl text-[#8B5CF6]" />, desc: "당신의 사주팔자를 깊이 분석합니다." },
     { id: "today", title: "오늘의 운세", icon: <GiCrystalBall className="text-3xl text-[#4ADE80]" />, desc: "오늘 하루의 기운과 흐름을 확인하세요." },
     { id: "match", title: "궁합", icon: <GiHearts className="text-3xl text-[#F87171]" />, desc: "두 사람의 인연과 궁합을 알아보세요." },
@@ -41,16 +41,19 @@ const MainSelect = () => {
 
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center md:h-full">
             <h2 className="text-center text-2xl md:text-3xl font-semibold mb-6 text-[#FACC15]">무엇을 보고싶으신가요?</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-xl md:h-full">
                 {menuList.map((menu) => (
                     <motion.button
                         key={menu.id}
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
-                        onClick={() => handleSelect(menu.id)}
+                        onClick={() => {
+                            if (menu.id === "match") alert("서비스 준비중...")
+                            else handleSelect(menu.id)
+                        }}
                         className="flex flex-col items-center justify-center bg-[#141322]/70 border border-[#8B5CF6]/30 rounded-2xl p-6 hover:shadow-[0_0_20px_rgba(139,92,246,0.4)] transition-all"
                     >
                         {menu.icon}

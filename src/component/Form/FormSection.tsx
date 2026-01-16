@@ -1,14 +1,15 @@
 import { useRef } from 'react'
-import { useUserStore } from '../store/userDataStore'
+import { useUserStore } from '../../store/userDataStore'
 import { useUserFormHandlers } from '@/utils/useUserFormHandlers'
+import { birthTimeOptions } from './config';
 
 const FormSection = ({ onClick }: { onClick: () => void }) => {
     //ref
     const dateRef = useRef<HTMLInputElement>(null);
-    const timeRef = useRef<HTMLInputElement>(null);
+
     //store
     const { userData } = useUserStore()
-    const { handleChangeInput, handleSelectOptions } = useUserFormHandlers()
+    const { handleChangeInput, hadelSelectTime, handleSelectOptions } = useUserFormHandlers()
 
 
     const openDatePicker = () => {
@@ -19,19 +20,6 @@ const FormSection = ({ onClick }: { onClick: () => void }) => {
             if ("showPicker" in el) {
                 el.showPicker();
             } else {
-            }
-        }
-    };
-
-    const openTimePicker = () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const el = timeRef.current as any; // ✅ 명시적 단언;
-
-        if (el) {
-            if ("showPicker" in el) {
-                el.showPicker();
-            } else {
-                el.focus();
             }
         }
     };
@@ -86,19 +74,26 @@ const FormSection = ({ onClick }: { onClick: () => void }) => {
                         />
                     </div>
 
-                    <div onClick={openTimePicker}>
+                    <div>
                         <label htmlFor="birthTime" className="block mb-1 text-gray-300">
                             출생 시간
                         </label>
-                        <input
-                            value={userData.birthTime}
-                            name="birthTime"
-                            ref={timeRef}
+                        <select
                             id="birthTime"
-                            type="time"
-                            className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6] appearance-none"
-                            onChange={handleChangeInput}
-                        />
+                            value={userData.birthTime}
+                            onChange={hadelSelectTime}
+                            className="w-full bg-transparent border border-gray-600 rounded-lg px-3 py-2 focus:border-[#8B5CF6] appearance-none">
+                            <option value="" disabled>
+                                선택
+                            </option>
+                            {birthTimeOptions.map((item) => (
+                                <option key={item.value} value={item.value}>
+                                    {item.label} ({item.start} ~ {item.end})
+                                </option>
+                            ))}
+                        </select>
+
+
                         {/* eslint-disable-next-line react/no-unescaped-entities */}
                         <p className="text-xs text-gray-500 mt-1">모르면 '모름'에 체크하세요</p>
                     </div>
