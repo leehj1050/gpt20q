@@ -20,6 +20,13 @@ export const metadata: Metadata = {
     shortcut: "/app_icon.png", // 과거 브라우저 호환용
     apple: "/app_icon.png" // iOS 홈화면용
   },
+  // 확대/축소 막기
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
 export default function RootLayout({

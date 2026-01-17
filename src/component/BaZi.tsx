@@ -86,7 +86,7 @@ const BaZi = () => {
 
 
   return (
-    !loading ? (
+    loading ? (
       <LoadingUI sajuType={selectedType} />
     ) : !answerData ? (
       <FormSection onClick={handleClickEvent} />
