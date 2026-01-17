@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "dev": "granite dev",
+    "build": "granite build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy": "ait deploy"
   },
   "dependencies": {
+    "@apps-in-toss/web-framework": "^1.7.1",
     "axios": "^1.12.2",
     "framer-motion": "^12.25.0",
     "lucide-react": "^0.546.0",

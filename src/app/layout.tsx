@@ -16,9 +16,9 @@ export const metadata: Metadata = {
   title: "GPT saju",
   description: "GPT 오픈AI API를 활용한 사주팔자풀이 앱",
   icons: {
-    icon: "/favicon.png", // public 폴더에 있는 경우
-    shortcut: "/favicon.png", // 과거 브라우저 호환용
-    apple: "/favifon.png" // iOS 홈화면용
+    icon: "/app_icon.png", // public 폴더에 있는 경우
+    shortcut: "/app_icon.png", // 과거 브라우저 호환용
+    apple: "/app_icon.png" // iOS 홈화면용
   },
 };
 

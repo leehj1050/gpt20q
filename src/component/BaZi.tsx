@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useState } from "react";
 import Answer from "./Answer/Answer";
-import Pending from "../UI/Pending";
+import LoadingUI from "../UI/LoadingUI";
 import { useUserStore } from "@/store/userDataStore";
 import { useAnswerStore } from "../store/useAnswerStore";
 import { useSelectedStore } from "../store/useSelectedStore";
@@ -86,8 +86,8 @@ const BaZi = () => {
 
 
   return (
-    loading ? (
-      <Pending />
+    !loading ? (
+      <LoadingUI sajuType={selectedType} />
     ) : !answerData ? (
       <FormSection onClick={handleClickEvent} />
     ) : (

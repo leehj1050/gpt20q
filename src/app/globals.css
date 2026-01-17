@@ -10,7 +10,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* ✅ animation token */
+  --animate-spin-slow: spin-slow 2.5s linear infinite;
 }
+
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -28,3 +32,43 @@ html,body {
 button{
   cursor: pointer;
 }
+
+
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/*
+Loading UI 애니메이션
+✅ keyframes는 일반 CSS로 
+*/
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* 로딩중일떄 텍스트에 그림자 애니메이션 */
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(216, 180, 254, 0.35) 25%,
+    rgba(236, 210, 255, 0.9) 37%,
+    rgba(216, 180, 254, 0.35) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.2s ease-in-out infinite;
+
+  /* 핵심 */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
