@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -16,24 +16,25 @@ export const metadata: Metadata = {
   title: "GPT saju",
   description: "GPT 오픈AI API를 활용한 사주팔자풀이 앱",
   icons: {
-    icon: "/app_icon.png", // public 폴더에 있는 경우
-    shortcut: "/app_icon.png", // 과거 브라우저 호환용
-    apple: "/app_icon.png" // iOS 홈화면용
+    icon: "/app_icon.png",
+    shortcut: "/app_icon.png",
+    apple: "/app_icon.png",
   },
-  // 확대/축소 막기
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+};
+
+/* ✅ viewport는 반드시 분리 */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
