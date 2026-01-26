@@ -9,7 +9,7 @@ const TYPE_MAP = {
 }
 
 const FortuneLoadingUI = ({ sajuType }: { sajuType: SajuType | null }) => {
-    const message = `당신의 ${TYPE_MAP[sajuType ?? "default"]} 해석하고 있어요`
+    const message = `당신의 ${TYPE_MAP[sajuType ?? "default"]} 분석하고 있어요`
 
 
     return (
